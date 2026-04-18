@@ -1,0 +1,49 @@
+{
+  "name": "@prcompass/pr-triage-filter",
+  "version": "0.0.0",
+  "description": "Deterministic filter that classifies PR files as skip | skim | review-candidate — pure TypeScript, no LLM, no network. Seed the human reviewer's attention.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "pr",
+    "pull-request",
+    "code-review",
+    "github",
+    "triage",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prcompass/prcompass.git",
+    "directory": "packages/tier1-filter"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run --passWithNoTests",
+    "bench": "vitest bench --run"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": false
+}
