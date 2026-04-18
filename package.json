@@ -1,7 +1,7 @@
 {
   "name": "@prcompass/pr-triage-filter",
   "version": "0.0.0",
-  "description": "Deterministic filter that classifies PR files as skip | skim | review-candidate — pure TypeScript, no LLM, no network. Seed the human reviewer's attention.",
+  "description": "A deterministic PR file-triage filter. Zero runtime dependencies. Written in TypeScript, runs on Node 22+.",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -16,6 +16,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "keywords": [
@@ -24,7 +25,8 @@
     "code-review",
     "github",
     "triage",
-    "typescript"
+    "typescript",
+    "zero-deps"
   ],
   "repository": {
     "type": "git",
@@ -34,11 +36,15 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src",
-    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src tests",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run"
   },
+  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^2.1.8",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },
