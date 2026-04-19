@@ -39,5 +39,5 @@ export const RULES: readonly Rule[] = [...pathBasedRules, ...contentBasedRules];
 export const DEFAULT_VERDICT = {
   verdict: "review-candidate" as const,
   ruleId: "default",
-  reason: "Source change in non-test, non-config code",
+  reason: "Production source code outside tests, docs, and config paths.",
 } as const;

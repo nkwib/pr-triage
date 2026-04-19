@@ -176,7 +176,7 @@ const renameOnly: Rule = {
     if (file.changeType === "renamed" && file.additions === 0 && file.deletions === 0) {
       return {
         verdict: "skip",
-        reason: "Pure rename with no content change",
+        reason: "Pure rename; no content change to review.",
       };
     }
     return null;
@@ -191,7 +191,7 @@ const lockfile: Rule = {
     if (LOCKFILES.includes(name)) {
       return {
         verdict: "skip",
-        reason: "Package lockfile — content is auto-generated",
+        reason: "Auto-generated lockfile; re-review by rerunning the package manager, not by reading the diff.",
       };
     }
     return null;
@@ -206,7 +206,7 @@ const generatedPath: Rule = {
       if (inDirectory(file.path, dir)) {
         return {
           verdict: "skip",
-          reason: `File is inside the generated directory \`${dir}/\``,
+          reason: `Regenerated output from \`${dir}/\`; verify by rerunning the generator.`,
         };
       }
     }
@@ -214,7 +214,7 @@ const generatedPath: Rule = {
       if (endsWithLower(file.path, suffix)) {
         return {
           verdict: "skip",
-          reason: `Filename ends with \`${suffix}\` — typically generated`,
+          reason: `Regenerated output (\`${suffix}\`); verify by rerunning the generator.`,
         };
       }
     }
@@ -230,7 +230,7 @@ const binary: Rule = {
       if (endsWithLower(file.path, ext)) {
         return {
           verdict: "skip",
-          reason: `Binary asset (\`${ext}\`)`,
+          reason: `Binary asset (\`${ext}\`); review by comparing rendered output, not textual diff.`,
         };
       }
     }
@@ -248,21 +248,21 @@ const docs: Rule = {
       if (endsWithLower(file.path, ext)) {
         return {
           verdict: "skim",
-          reason: "Documentation file — Markdown content",
+          reason: "Prose-only Markdown change.",
         };
       }
     }
     if (DOC_FILENAMES.includes(stem)) {
       return {
         verdict: "skim",
-        reason: "Canonical project doc (README/CHANGELOG/LICENSE-style)",
+        reason: "Top-level project document (README / CHANGELOG / LICENSE family).",
       };
     }
     for (const dir of DOC_DIRS) {
       if (inDirectory(file.path, dir)) {
         return {
           verdict: "skim",
-          reason: `File lives in \`${dir}/\` — documentation`,
+          reason: `Prose documentation under \`${dir}/\`.`,
         };
       }
     }
@@ -278,28 +278,28 @@ const config: Rule = {
     if (CONFIG_FILENAMES.includes(name)) {
       return {
         verdict: "skim",
-        reason: "Repository configuration file",
+        reason: "Repository-level configuration; scan for structural edits before trusting.",
       };
     }
     for (const suffix of CONFIG_SUFFIXES) {
       if (endsWithLower(name, suffix)) {
         return {
           verdict: "skim",
-          reason: `Configuration file (${suffix})`,
+          reason: `Configuration file (\`${suffix}\`); scan for structural edits before trusting.`,
         };
       }
     }
     if (name === "package.json") {
       return {
         verdict: "skim",
-        reason: "`package.json` — dependency or script changes",
+        reason: "Edit to `package.json`; inspect for major-version dependency bumps or script changes.",
       };
     }
     for (const ext of CONFIG_EXTENSIONS) {
       if (endsWithLower(name, ext) && !inDirectory(file.path, "src")) {
         return {
           verdict: "skim",
-          reason: `Configuration file (${ext})`,
+          reason: `Configuration file (\`${ext}\`); scan for structural edits before trusting.`,
         };
       }
     }
@@ -316,7 +316,7 @@ const test: Rule = {
       if (lower.includes(infix)) {
         return {
           verdict: "skim",
-          reason: `Test file (\`${infix}\` in filename)`,
+          reason: "Test code accompanying the production change.",
         };
       }
     }
@@ -324,7 +324,7 @@ const test: Rule = {
       if (inDirectory(file.path, dir)) {
         return {
           verdict: "skim",
-          reason: `File lives in \`${dir}/\``,
+          reason: "Test code accompanying the production change.",
         };
       }
     }

@@ -82,7 +82,7 @@ const prettierOnly: Rule = {
     if (!sawChange) return null;
     return {
       verdict: "skip",
-      reason: "Whitespace-only diff (formatter rewrite)",
+      reason: "Whitespace-only formatter pass; no semantic change.",
     };
   },
 };
@@ -129,7 +129,7 @@ const importReorder: Rule = {
     }
     return {
       verdict: "skip",
-      reason: "Import reorder — same import set before and after",
+      reason: "Import order changed; the set of imports is identical before and after.",
     };
   },
 };
@@ -162,7 +162,7 @@ const generatedHeader: Rule = {
       if (first500.includes(sig)) {
         return {
           verdict: "skip",
-          reason: `Diff header contains a generated marker (\`${sig}\`)`,
+          reason: `Auto-generated (file header says \`${sig}\`); re-review by regenerating, not by reading the diff.`,
         };
       }
     }
