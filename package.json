@@ -43,6 +43,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@prcompass/prompts": "workspace:*",
     "@types/node": "^22.10.0",
     "@vitest/coverage-v8": "^2.1.8",
     "typescript": "^5.7.2",

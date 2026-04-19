@@ -25,7 +25,19 @@ import { describe, expect, it } from "vitest";
 import { classifyPrFiles } from "../src/index.js";
 import { fixtures } from "./fixtures/index.js";
 
-const FORBIDDEN_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
+// Tier 1 rule reasons must avoid two overlapping voices:
+//
+//   1. Metadata / debugging voice — "file matches X", "rule fired",
+//      tautological "test file (.test. in filename)". These leaked
+//      into the first live sandbox brief (see commit history for
+//      M5 iteration 1).
+//   2. Prescriptive voice (active, passive, or euphemistic) — a reason
+//      must describe the code, not direct the reviewer. Patterns
+//      imported from `@prcompass/prompts` so Tier 1 and Tier 2
+//      enforce a single rule set; drift in one is drift in both.
+import { VOICE_LEAK_PATTERNS } from "@prcompass/prompts";
+
+const METADATA_VOICE_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
   ["'file matches' metadata voice", /file matches/i],
   ["'pattern matched' metadata voice", /pattern matched/i],
   ["'rule fired' debugging voice", /rule fired/i],
@@ -36,6 +48,11 @@ const FORBIDDEN_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
   ["tautological 'file type detected'", /file type detected/i],
   ["'file lives in' without content value (bare)", /^file lives in/i],
 ];
+
+const FORBIDDEN_PATTERNS = [
+  ...METADATA_VOICE_PATTERNS,
+  ...VOICE_LEAK_PATTERNS,
+] as const;
 
 describe("Tier 1 rule reasons — reviewer-facing voice", () => {
   const allReasons = classifyPrFiles({ files: fixtures.map((f) => f.input) })
