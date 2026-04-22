@@ -191,7 +191,8 @@ const lockfile: Rule = {
     if (LOCKFILES.includes(name)) {
       return {
         verdict: "skip",
-        reason: "Auto-generated lockfile; re-review by rerunning the package manager, not by reading the diff.",
+        reason:
+          "Auto-generated lockfile; re-review by rerunning the package manager, not by reading the diff.",
       };
     }
     return null;
@@ -278,7 +279,8 @@ const config: Rule = {
     if (CONFIG_FILENAMES.includes(name)) {
       return {
         verdict: "skim",
-        reason: "Repository-level configuration; scan for structural edits before trusting.",
+        reason:
+          "Repository-level configuration; scan for structural edits before trusting.",
       };
     }
     for (const suffix of CONFIG_SUFFIXES) {
@@ -292,7 +294,8 @@ const config: Rule = {
     if (name === "package.json") {
       return {
         verdict: "skim",
-        reason: "Edit to `package.json`; inspect for major-version dependency bumps or script changes.",
+        reason:
+          "Edit to `package.json`; inspect for major-version dependency bumps or script changes.",
       };
     }
     for (const ext of CONFIG_EXTENSIONS) {

@@ -41,10 +41,7 @@ const METADATA_VOICE_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
   ["'file matches' metadata voice", /file matches/i],
   ["'pattern matched' metadata voice", /pattern matched/i],
   ["'rule fired' debugging voice", /rule fired/i],
-  [
-    "tautological test-file explanation",
-    /\.(test|spec)\.?\s*(in filename|pattern)/i,
-  ],
+  ["tautological test-file explanation", /\.(test|spec)\.?\s*(in filename|pattern)/i],
   ["tautological 'file type detected'", /file type detected/i],
   ["'file lives in' without content value (bare)", /^file lives in/i],
 ];
@@ -55,8 +52,9 @@ const FORBIDDEN_PATTERNS = [
 ] as const;
 
 describe("Tier 1 rule reasons — reviewer-facing voice", () => {
-  const allReasons = classifyPrFiles({ files: fixtures.map((f) => f.input) })
-    .verdicts.map((v) => v.reason);
+  const allReasons = classifyPrFiles({
+    files: fixtures.map((f) => f.input),
+  }).verdicts.map((v) => v.reason);
 
   it.each(FORBIDDEN_PATTERNS)(
     "no fixture produces a reason matching anti-pattern: %s",
