@@ -30,8 +30,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nkwib/prcompass.git",
-    "directory": "packages/tier1-filter"
+    "url": "https://github.com/nkwib/prcompass-pr-triage-filter.git"
   },
   "scripts": {
     "build": "tsc",
