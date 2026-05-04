@@ -1,0 +1,161 @@
+---
+title: '@prcompass/pr-triage-filter · API'
+---
+
+<svelte:head>
+  <title>@prcompass/pr-triage-filter · API</title>
+  <meta
+    name="description"
+    content="Complete API reference: classifyPrFiles, FileInput, FileVerdict, ClassifyInput, ClassifyResult, Verdict, ChangeType."
+  />
+</svelte:head>
+
+# API reference
+
+The package exports one function and seven types. Internal modules (rule implementations, diff parser) are not re-exported — consumers import only from the top-level.
+
+## Public exports
+
+| Export            | Kind     | Source                            |
+| ----------------- | -------- | --------------------------------- |
+| `classifyPrFiles` | function | `@prcompass/pr-triage-filter`     |
+| `Verdict`         | type     | `@prcompass/pr-triage-filter`     |
+| `ChangeType`      | type     | `@prcompass/pr-triage-filter`     |
+| `FileInput`       | type     | `@prcompass/pr-triage-filter`     |
+| `ClassifyInput`   | type     | `@prcompass/pr-triage-filter`     |
+| `FileVerdict`     | type     | `@prcompass/pr-triage-filter`     |
+| `ClassifyResult`  | type     | `@prcompass/pr-triage-filter`     |
+
+## `classifyPrFiles(input)`
+
+```ts
+function classifyPrFiles(input: ClassifyInput): ClassifyResult;
+```
+
+Classify every file in a pull request. **Pure, deterministic, zero I/O.** The order of `input.files` is preserved in `result.verdicts`.
+
+```ts
+import { classifyPrFiles } from '@prcompass/pr-triage-filter';
+
+const { verdicts } = classifyPrFiles({
+  files: [
+    { path: 'README.md', changeType: 'modified', additions: 4, deletions: 1 }
+  ]
+});
+// verdicts[0] = { path: 'README.md', verdict: 'skim', ruleId: 'docs', reason: '…' }
+```
+
+## `Verdict`
+
+```ts
+type Verdict = 'skip' | 'skim' | 'review-candidate';
+```
+
+Escalation verdict for one file:
+
+- `skip` — definitively ignorable (lockfiles, generated, binary, prettier-only, …).
+- `skim` — likely low-risk but worth a glance (tests, config, docs).
+- `review-candidate` — must be evaluated further (real source change).
+
+## `ChangeType`
+
+```ts
+type ChangeType = 'added' | 'modified' | 'deleted' | 'renamed';
+```
+
+The kind of change GitHub reports for a file. Map GitHub's `status` field to one of these values before calling `classifyPrFiles`.
+
+## `FileInput`
+
+```ts
+interface FileInput {
+  /** Full repo-relative path in the new (or only) revision. */
+  readonly path: string;
+
+  /** Previous path when changeType === 'renamed'. */
+  readonly previousPath?: string;
+
+  /** Kind of change (mapped from GitHub's `status` field). */
+  readonly changeType: ChangeType;
+
+  /** Number of lines added. */
+  readonly additions: number;
+
+  /** Number of lines deleted. */
+  readonly deletions: number;
+
+  /**
+   * Unified-diff patch as GitHub returns it for this file (no `diff --git`
+   * header, just hunks). Optional — several rules work without it.
+   */
+  readonly patch?: string;
+}
+```
+
+`patch` is optional. The path-based rules (`lockfile`, `docs`, `config`, `test`, …) never inspect it. Content-based rules (`prettier-only`, `import-reorder`, `generated-header`) skip files without a patch and fall through to later rules.
+
+## `ClassifyInput`
+
+```ts
+interface ClassifyInput {
+  readonly files: readonly FileInput[];
+}
+```
+
+Input wrapper for one PR. The list may be empty (returns `{ verdicts: [] }`).
+
+## `FileVerdict`
+
+```ts
+interface FileVerdict {
+  /** Path from the corresponding FileInput. */
+  readonly path: string;
+
+  readonly verdict: Verdict;
+
+  /**
+   * Stable identifier of the rule that produced this verdict.
+   * Safe to match against in caller code.
+   */
+  readonly ruleId: string;
+
+  /**
+   * Short human-readable explanation. Not UI-stable across versions.
+   */
+  readonly reason: string;
+}
+```
+
+`ruleId` is part of the public contract — `'lockfile'`, `'docs'`, `'default'`, etc. are stable across minor versions. `reason` is intended for logs and debugging; do not pattern-match on it.
+
+See the [rule table](/rules) for the full set of `ruleId` values.
+
+## `ClassifyResult`
+
+```ts
+interface ClassifyResult {
+  readonly verdicts: readonly FileVerdict[];
+}
+```
+
+Order of `verdicts` matches the order of `input.files`. The result is immutable (`readonly` arrays and properties throughout).
+
+## Performance
+
+Processes a 100-file PR in well under 500&nbsp;ms on a modern laptop. Verified by `tests/performance.test.ts` in CI. Co-change graphs and any `O(F²)` work are deliberately *not* part of this package — they live in [`@prcompass/core`](https://github.com/nkwib/prcompass-core).
+
+## Module entry point
+
+```ts
+import {
+  classifyPrFiles,
+  type Verdict,
+  type ChangeType,
+  type FileInput,
+  type FileVerdict,
+  type ClassifyInput,
+  type ClassifyResult
+} from '@prcompass/pr-triage-filter';
+```
+
+There is no subpath namespace — everything ships from the top-level.

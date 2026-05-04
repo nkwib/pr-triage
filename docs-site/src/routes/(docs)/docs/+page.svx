@@ -1,0 +1,100 @@
+---
+title: '@prcompass/pr-triage-filter · Guide'
+---
+
+<svelte:head>
+  <title>@prcompass/pr-triage-filter · Guide</title>
+  <meta
+    name="description"
+    content="Deterministic PR file-triage filter. Zero runtime dependencies. Classifies each file in a pull request as skip, skim, or review-candidate."
+  />
+</svelte:head>
+
+# Guide
+
+A deterministic PR file-triage filter. **Zero runtime dependencies.** Pure function. No I/O.
+
+Given the files in a pull request, classifies each as `skip`, `skim`, or `review-candidate` so a reviewer (or the next LLM tier in a review pipeline) spends attention only on what changed. Uses path patterns, git metadata, and diff-level heuristics. **No AST parsing. No network. No filesystem.**
+
+Extracted from [PR Compass](https://github.com/prcompass/prcompass) and published standalone so any review pipeline can use it.
+
+<h2 id="installation">Installation</h2>
+
+```sh
+npm install @prcompass/pr-triage-filter
+# or pnpm / yarn / bun
+```
+
+Requires Node 20+. ESM-only. `sideEffects: false`.
+
+<h2 id="quick-start">Quick start</h2>
+
+```ts
+import { classifyPrFiles } from '@prcompass/pr-triage-filter';
+
+const result = classifyPrFiles({
+  files: [
+    {
+      path: 'pnpm-lock.yaml',
+      changeType: 'modified',
+      additions: 120,
+      deletions: 45
+    },
+    {
+      path: 'src/pricing.ts',
+      changeType: 'modified',
+      additions: 30,
+      deletions: 5,
+      patch: '@@ -10,3 +10,4 @@\n ...'
+    }
+  ]
+});
+
+for (const v of result.verdicts) {
+  console.log(v.path, v.verdict, `(${v.ruleId})`, v.reason);
+}
+// pnpm-lock.yaml skip (lockfile) Package lockfile — content is auto-generated
+// src/pricing.ts review-candidate (default) Production source code outside tests, docs, and config paths.
+```
+
+`classifyPrFiles` is **pure** — same input, same output. The order of `result.verdicts` matches `input.files`.
+
+<h2 id="verdicts">Verdicts</h2>
+
+This package emits an **escalation verdict** — what the *next* tier should do with the file:
+
+| Verdict             | Meaning                                                                |
+| ------------------- | ---------------------------------------------------------------------- |
+| `skip`              | Definitively ignorable (lockfiles, generated, binary, prettier-only, …) |
+| `skim`              | Likely low-risk but worth a glance (tests, config, docs)                |
+| `review-candidate`  | Must be evaluated further (real source change)                          |
+
+> **Note** — classifiers downstream of this package (notably Tier 2 in PR Compass) use a different, final-reviewer vocabulary (`review | skim | skip`). The two taxonomies intentionally diverge.
+
+See the full first-match-wins rule table at [/rules](/rules).
+
+<h2 id="zero-deps">Why zero dependencies</h2>
+
+- Every transitive dep is a vulnerability surface someone has to maintain.
+- Ecosystem adoption is easier if adding this package doesn't add 40&nbsp;MB to your `node_modules`.
+- If a triage filter needs a library to work, it's probably over-engineered.
+
+`"dependencies": {}` is enforced. The `package-invariants` test fails the build if a runtime dependency is added.
+
+<h2 id="non-goals">Non-goals</h2>
+
+This package is **file-triage only** — input is files, output is verdicts. It deliberately does **not**:
+
+- Parse code (no AST, no language-aware understanding of changes).
+- Run on the working tree (no `fs`, no `git` subprocess — caller produces `FileInput`).
+- Score risk or severity (that's [`@prcompass/core`](https://github.com/nkwib/prcompass-core)).
+- Suggest fixes or post comments — out of scope by design.
+
+Target accuracy is ~85–90 % against hand-reviewed fixtures. The goal is to remove **50–70 %** of files from a reviewer's budget, not to be perfect. Two known accepted false-positive classes are documented in the [Rule table](/rules).
+
+## Where next
+
+- [API reference](/api) — every function, every type.
+- [Rules](/rules) — the full classification table and the rationale for ordering.
+- [Glossary](/glossary) — canonical terms used in source, types, and docs.
+- [Examples](/examples) — copy-paste integrations for GitHub PR webhooks and the CLI.

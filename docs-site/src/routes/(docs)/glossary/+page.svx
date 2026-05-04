@@ -1,0 +1,75 @@
+---
+title: '@prcompass/pr-triage-filter · Glossary'
+---
+
+<svelte:head>
+  <title>@prcompass/pr-triage-filter · Glossary</title>
+  <meta
+    name="description"
+    content="Canonical terms — Verdict, Escalation verdict, Rule, Rule ID, Reason, FileInput, Patch, Hunk."
+  />
+</svelte:head>
+
+# Glossary
+
+The terms below are the **canonical names** used in source, types, and documentation. The right-hand side of each entry lists wording the codebase intentionally avoids.
+
+## Verdict
+
+The classification label produced for one file: `skip`, `skim`, or `review-candidate`. The values are stable across versions.
+
+> _Avoid:_ "category", "tier", "label", "decision" — `Verdict` is the type name; matching it across docs and code reduces friction.
+
+## Escalation verdict
+
+Synonym for `Verdict`, used in prose to disambiguate from downstream classifiers (notably Tier 2 in PR Compass) which emit a *final-reviewer* vocabulary (`review | skim | skip`). This package emits an **escalation** verdict — what the *next* tier should do, not what the *human* should ultimately do.
+
+> _Avoid:_ "review verdict" — that vocabulary belongs to the next tier and intentionally diverges here.
+
+## Rule
+
+A function from `FileInput` to either a `RuleMatch` (`{ verdict, reason }`) or `null`. Rules live in the package's internal `rules/` directory and are evaluated **first-match-wins** in a single registered order.
+
+> _Avoid:_ "filter", "matcher", "checker" — `Rule` is the canonical noun.
+
+## Rule ID
+
+A short, lowercase, hyphen-separated identifier surfaced on every `FileVerdict` (`'lockfile'`, `'prettier-only'`, `'default'`, …). Rule IDs are part of the **public contract** — safe to branch on, stable across minor versions.
+
+> _Avoid:_ "rule name", "rule key" — *ID* is the type field name and the term used in docs.
+
+## Reason
+
+The human-readable explanation attached to a verdict. Useful for logs and debugging. **Not UI-stable** — wording may change between versions; never pattern-match on it.
+
+> _Avoid:_ "explanation", "message" — `reason` is the field name; we keep prose aligned.
+
+## FileInput
+
+The shape of one file in the input. Carries `path`, `changeType`, `additions`, `deletions`, optional `previousPath` (for renames), and optional `patch`. Every numeric field is a count, never a fraction.
+
+> _Avoid:_ "file change", "change record" — the type name `FileInput` is short and unambiguous.
+
+## Patch
+
+A unified-diff string in the format GitHub returns for a single file — no `diff --git` header, just `@@`-prefixed hunks. Optional. Path-based rules ignore it; content-based rules require it.
+
+> _Avoid:_ "diff" alone (overloaded with the whole-PR concept), "delta", "change set".
+
+## Hunk
+
+A single `@@` block within a patch — one contiguous change region with its added (`+`) and removed (`-`) lines. Several rules (`prettier-only`, `import-reorder`) reason hunk-by-hunk rather than over the whole patch.
+
+> _Avoid:_ "block", "region" — we use `Hunk` because every diff parser already does.
+
+## First-match-wins
+
+The rule-evaluation policy: rules are scanned in registered order, and the **first** rule that returns a non-null match decides the verdict. No rule that comes later can override it. Reordering rules changes behaviour; adding a more-specific rule **before** a more-general one is always safe.
+
+> _Avoid:_ "priority order" — that suggests numeric priorities, which the registry does not have.
+
+## Default verdict
+
+The fallback when no rule matches: `{ verdict: 'review-candidate', ruleId: 'default', reason: '…' }`. Conservative on purpose — *unfamiliar = review-candidate*, never `skip`.
+
+> _Avoid:_ "fallback verdict" — *default* matches the source name (`DEFAULT_VERDICT`).
