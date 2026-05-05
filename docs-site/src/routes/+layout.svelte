@@ -17,7 +17,7 @@
     // Apply stored theme before paint to avoid FOUC.
     (function () {
       try {
-        var stored = localStorage.getItem('triage-filter-theme');
+        var stored = localStorage.getItem('pr-triage-theme');
         var theme =
           stored === 'light' || stored === 'dark'
             ? stored

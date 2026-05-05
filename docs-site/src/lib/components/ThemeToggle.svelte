@@ -5,7 +5,7 @@
   let mounted = $state(false);
 
   onMount(() => {
-    const stored = localStorage.getItem('triage-filter-theme');
+    const stored = localStorage.getItem('pr-triage-theme');
     const initial =
       stored === 'light' || stored === 'dark'
         ? stored
@@ -20,7 +20,7 @@
   function toggle() {
     theme = theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('triage-filter-theme', theme);
+    localStorage.setItem('pr-triage-theme', theme);
   }
 </script>
 

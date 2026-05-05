@@ -10,10 +10,10 @@
       <span class="muted">Deterministic PR file-triage filter</span>
     </div>
     <div class="links">
-      <a href="https://github.com/nkwib/prcompass-pr-triage-filter" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/nkwib/pr-triage" target="_blank" rel="noopener">GitHub</a>
       <a href="https://www.npmjs.com/package/@prcompass/pr-triage-filter" target="_blank" rel="noopener">npm</a>
       <a
-        href="https://github.com/nkwib/prcompass-pr-triage-filter/blob/main/LICENSE"
+        href="https://github.com/nkwib/pr-triage/blob/main/LICENSE"
         target="_blank"
         rel="noopener">Apache-2.0</a
       >
