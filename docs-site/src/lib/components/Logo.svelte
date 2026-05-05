@@ -25,7 +25,7 @@
     <line x1="9" y1="16" x2="19" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
     <line x1="9" y1="21" x2="15" y2="21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
   </svg>
-  <span class="wordmark">triage-filter</span>
+  <span class="wordmark">pr-triage</span>
 </span>
 
 <style>

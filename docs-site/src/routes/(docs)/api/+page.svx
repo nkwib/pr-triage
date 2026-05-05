@@ -142,7 +142,7 @@ Order of `verdicts` matches the order of `input.files`. The result is immutable 
 
 ## Performance
 
-Processes a 100-file PR in well under 500&nbsp;ms on a modern laptop. Verified by `tests/performance.test.ts` in CI. Co-change graphs and any `O(F²)` work are deliberately *not* part of this package — they live in [`@prcompass/core`](https://github.com/nkwib/prcompass-core).
+Processes a 100-file PR in well under 500&nbsp;ms on a modern laptop. Verified by `tests/performance.test.ts` in CI. Co-change graphs and any `O(F²)` work are deliberately *not* part of this package — they live in [`@prcompass/core`](https://github.com/nkwib/pr-engine).
 
 ## Module entry point
 

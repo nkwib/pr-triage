@@ -87,7 +87,7 @@ This package is **file-triage only** — input is files, output is verdicts. It 
 
 - Parse code (no AST, no language-aware understanding of changes).
 - Run on the working tree (no `fs`, no `git` subprocess — caller produces `FileInput`).
-- Score risk or severity (that's [`@prcompass/core`](https://github.com/nkwib/prcompass-core)).
+- Score risk or severity (that's [`@prcompass/core`](https://github.com/nkwib/pr-engine)).
 - Suggest fixes or post comments — out of scope by design.
 
 Target accuracy is ~85–90 % against hand-reviewed fixtures. The goal is to remove **50–70 %** of files from a reviewer's budget, not to be perfect. Two known accepted false-positive classes are documented in the [Rule table](/rules).

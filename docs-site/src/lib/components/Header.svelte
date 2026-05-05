@@ -19,7 +19,7 @@
 
 <header class="header">
   <div class="inner">
-    <a href="/" class="brand" aria-label="triage-filter home">
+    <a href="/" class="brand" aria-label="pr-triage home">
       <Logo />
       <span class="version" aria-hidden="true">v0.1</span>
     </a>
@@ -39,7 +39,7 @@
     <div class="actions">
       <a
         class="gh"
-        href="https://github.com/nkwib/prcompass-pr-triage-filter"
+        href="https://github.com/nkwib/pr-triage"
         target="_blank"
         rel="noopener"
         aria-label="GitHub repository"
