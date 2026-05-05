@@ -1,9 +1,9 @@
 ---
-title: '@prcompass/pr-triage-filter · Glossary'
+title: '@nkwib/pr-triage · Glossary'
 ---
 
 <svelte:head>
-  <title>@prcompass/pr-triage-filter · Glossary</title>
+  <title>@nkwib/pr-triage · Glossary</title>
   <meta
     name="description"
     content="Canonical terms — Verdict, Escalation verdict, Rule, Rule ID, Reason, FileInput, Patch, Hunk."

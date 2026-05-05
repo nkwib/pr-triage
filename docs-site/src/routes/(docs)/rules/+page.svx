@@ -1,9 +1,9 @@
 ---
-title: '@prcompass/pr-triage-filter · Rules'
+title: '@nkwib/pr-triage · Rules'
 ---
 
 <svelte:head>
-  <title>@prcompass/pr-triage-filter · Rules</title>
+  <title>@nkwib/pr-triage · Rules</title>
   <meta
     name="description"
     content="The 11 rules used to classify PR files, evaluated in order. First match wins. Stable rule IDs are safe to pattern-match against."
