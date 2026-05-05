@@ -1,9 +1,9 @@
 ---
-title: '@prcompass/pr-triage-filter · API'
+title: '@nkwib/pr-triage · API'
 ---
 
 <svelte:head>
-  <title>@prcompass/pr-triage-filter · API</title>
+  <title>@nkwib/pr-triage · API</title>
   <meta
     name="description"
     content="Complete API reference: classifyPrFiles, FileInput, FileVerdict, ClassifyInput, ClassifyResult, Verdict, ChangeType."
@@ -18,13 +18,13 @@ The package exports one function and seven types. Internal modules (rule impleme
 
 | Export            | Kind     | Source                            |
 | ----------------- | -------- | --------------------------------- |
-| `classifyPrFiles` | function | `@prcompass/pr-triage-filter`     |
-| `Verdict`         | type     | `@prcompass/pr-triage-filter`     |
-| `ChangeType`      | type     | `@prcompass/pr-triage-filter`     |
-| `FileInput`       | type     | `@prcompass/pr-triage-filter`     |
-| `ClassifyInput`   | type     | `@prcompass/pr-triage-filter`     |
-| `FileVerdict`     | type     | `@prcompass/pr-triage-filter`     |
-| `ClassifyResult`  | type     | `@prcompass/pr-triage-filter`     |
+| `classifyPrFiles` | function | `@nkwib/pr-triage`     |
+| `Verdict`         | type     | `@nkwib/pr-triage`     |
+| `ChangeType`      | type     | `@nkwib/pr-triage`     |
+| `FileInput`       | type     | `@nkwib/pr-triage`     |
+| `ClassifyInput`   | type     | `@nkwib/pr-triage`     |
+| `FileVerdict`     | type     | `@nkwib/pr-triage`     |
+| `ClassifyResult`  | type     | `@nkwib/pr-triage`     |
 
 ## `classifyPrFiles(input)`
 
@@ -35,7 +35,7 @@ function classifyPrFiles(input: ClassifyInput): ClassifyResult;
 Classify every file in a pull request. **Pure, deterministic, zero I/O.** The order of `input.files` is preserved in `result.verdicts`.
 
 ```ts
-import { classifyPrFiles } from '@prcompass/pr-triage-filter';
+import { classifyPrFiles } from '@nkwib/pr-triage';
 
 const { verdicts } = classifyPrFiles({
   files: [
@@ -142,7 +142,7 @@ Order of `verdicts` matches the order of `input.files`. The result is immutable 
 
 ## Performance
 
-Processes a 100-file PR in well under 500&nbsp;ms on a modern laptop. Verified by `tests/performance.test.ts` in CI. Co-change graphs and any `O(F²)` work are deliberately *not* part of this package — they live in [`@prcompass/core`](https://github.com/nkwib/pr-engine).
+Processes a 100-file PR in well under 500&nbsp;ms on a modern laptop. Verified by `tests/performance.test.ts` in CI. Co-change graphs and any `O(F²)` work are deliberately *not* part of this package — they live in [`@nkwib/pr-engine`](https://github.com/nkwib/pr-engine).
 
 ## Module entry point
 
@@ -155,7 +155,7 @@ import {
   type FileVerdict,
   type ClassifyInput,
   type ClassifyResult
-} from '@prcompass/pr-triage-filter';
+} from '@nkwib/pr-triage';
 ```
 
 There is no subpath namespace — everything ships from the top-level.

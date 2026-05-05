@@ -5,17 +5,17 @@
 <footer class="footer">
   <div class="inner">
     <div class="meta">
-      <span class="brand-mark">@prcompass/pr-triage-filter</span>
+      <span class="brand-mark">@nkwib/pr-triage</span>
       <span class="dot" aria-hidden="true">·</span>
       <span class="muted">Deterministic PR file-triage filter</span>
     </div>
     <div class="links">
       <a href="https://github.com/nkwib/pr-triage" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://www.npmjs.com/package/@prcompass/pr-triage-filter" target="_blank" rel="noopener">npm</a>
+      <a href="https://www.npmjs.com/package/@nkwib/pr-triage" target="_blank" rel="noopener">npm</a>
       <a
         href="https://github.com/nkwib/pr-triage/blob/main/LICENSE"
         target="_blank"
-        rel="noopener">Apache-2.0</a
+        rel="noopener">MIT</a
       >
     </div>
     <div class="copyright">© {year} · Built with SvelteKit + MDsveX</div>

@@ -1,5 +1,5 @@
 <svelte:head>
-  <title>@prcompass/pr-triage-filter — deterministic PR file-triage filter</title>
+  <title>@nkwib/pr-triage — deterministic PR file-triage filter</title>
   <meta
     name="description"
     content="Zero deps. Pure function. Classifies every PR file as skip · skim · review-candidate so reviewers focus where it matters."
@@ -11,14 +11,14 @@
     <div class="hero-copy">
       <span class="badge">
         <span class="dot" aria-hidden="true"></span>
-        v0.1 · Apache-2.0 · zero deps · Node 20+
+        v0.1 · MIT · zero deps · Node 20+
       </span>
       <h1>
         Strip the lockfiles.<br />
         <span class="accent">Find</span> the real review.
       </h1>
       <p class="lede">
-        <strong>@prcompass/pr-triage-filter</strong> classifies every file in a
+        <strong>@nkwib/pr-triage</strong> classifies every file in a
         pull request as <code>skip</code>, <code>skim</code>, or
         <code>review-candidate</code> — so a reviewer (or the next LLM tier)
         spends attention only on what changed.
@@ -29,7 +29,7 @@
         <a class="btn ghost" href="/examples">See examples</a>
       </div>
 
-      <pre class="install"><span class="prompt">$</span> npm install @prcompass/pr-triage-filter</pre>
+      <pre class="install"><span class="prompt">$</span> npm install @nkwib/pr-triage</pre>
     </div>
 
     <aside class="demo">
@@ -39,7 +39,7 @@
         </span>
         <span class="filename">classify.ts</span>
       </div>
-      <pre class="demo-code"><code><span class="kw">import</span> &lbrace; classifyPrFiles &rbrace; <span class="kw">from</span> <span class="str">'@prcompass/pr-triage-filter'</span>;
+      <pre class="demo-code"><code><span class="kw">import</span> &lbrace; classifyPrFiles &rbrace; <span class="kw">from</span> <span class="str">'@nkwib/pr-triage'</span>;
 
 <span class="kw">const</span> &lbrace; verdicts &rbrace; = <span class="fn">classifyPrFiles</span>(&lbrace;
   <span class="prop">files</span>: [

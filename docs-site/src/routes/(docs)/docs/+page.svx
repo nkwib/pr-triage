@@ -1,9 +1,9 @@
 ---
-title: '@prcompass/pr-triage-filter · Guide'
+title: '@nkwib/pr-triage · Guide'
 ---
 
 <svelte:head>
-  <title>@prcompass/pr-triage-filter · Guide</title>
+  <title>@nkwib/pr-triage · Guide</title>
   <meta
     name="description"
     content="Deterministic PR file-triage filter. Zero runtime dependencies. Classifies each file in a pull request as skip, skim, or review-candidate."
@@ -21,7 +21,7 @@ Extracted from [PR Compass](https://github.com/prcompass/prcompass) and publishe
 <h2 id="installation">Installation</h2>
 
 ```sh
-npm install @prcompass/pr-triage-filter
+npm install @nkwib/pr-triage
 # or pnpm / yarn / bun
 ```
 
@@ -30,7 +30,7 @@ Requires Node 20+. ESM-only. `sideEffects: false`.
 <h2 id="quick-start">Quick start</h2>
 
 ```ts
-import { classifyPrFiles } from '@prcompass/pr-triage-filter';
+import { classifyPrFiles } from '@nkwib/pr-triage';
 
 const result = classifyPrFiles({
   files: [
@@ -87,7 +87,7 @@ This package is **file-triage only** — input is files, output is verdicts. It 
 
 - Parse code (no AST, no language-aware understanding of changes).
 - Run on the working tree (no `fs`, no `git` subprocess — caller produces `FileInput`).
-- Score risk or severity (that's [`@prcompass/core`](https://github.com/nkwib/pr-engine)).
+- Score risk or severity (that's [`@nkwib/pr-engine`](https://github.com/nkwib/pr-engine)).
 - Suggest fixes or post comments — out of scope by design.
 
 Target accuracy is ~85–90 % against hand-reviewed fixtures. The goal is to remove **50–70 %** of files from a reviewer's budget, not to be perfect. Two known accepted false-positive classes are documented in the [Rule table](/rules).
