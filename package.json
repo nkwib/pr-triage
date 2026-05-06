@@ -1,7 +1,7 @@
 {
   "name": "@prcompass/pr-triage-filter",
   "version": "0.1.0",
-  "description": "A deterministic PR file-triage filter. Zero runtime dependencies. Written in TypeScript, runs on Node 22+.",
+  "description": "A deterministic PR file-triage filter. Zero runtime dependencies. Written in TypeScript, runs on Node >=20.",
   "license": "Apache-2.0",
   "private": true,
   "type": "module",
@@ -30,19 +30,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nkwib/prcompass-pr-triage-filter.git"
+    "url": "https://github.com/nkwib/pr-triage.git"
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "bench": "vitest bench --run"
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {},
   "devDependencies": {
-    "@prcompass/prompts": "workspace:*",
     "@types/node": "^22.10.0",
     "@vitest/coverage-v8": "^2.1.8",
     "typescript": "^5.7.2",

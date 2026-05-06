@@ -1,7 +1,7 @@
 # @prcompass/pr-triage-filter
 
 A deterministic PR file-triage filter. **Zero runtime dependencies.** Written
-in TypeScript, runs on Node 22+.
+in TypeScript, runs on Node >=20.
 
 Given the files in a pull request, classifies each as `skip | skim |
 review-candidate` so a reviewer's (or a downstream LLM's) attention lands
@@ -51,8 +51,8 @@ const result = classifyPrFiles({
 for (const v of result.verdicts) {
   console.log(v.path, v.verdict, `(${v.ruleId})`, v.reason);
 }
-// pnpm-lock.yaml skip (lockfile) Package lockfile — content is auto-generated
-// src/pricing.ts review-candidate (default) Source change in non-test, non-config code
+// pnpm-lock.yaml skip (lockfile) Auto-generated lockfile; re-review by rerunning the package manager, not by reading the diff.
+// src/pricing.ts review-candidate (default) Production source code outside tests, docs, and config paths.
 ```
 
 ## Rules
@@ -123,9 +123,9 @@ Consumers import only from the top-level.
 
 ## Performance
 
-Processes a 100-file PR in well under 500ms on a modern laptop. Tested in
-CI; see `tests/performance.test.ts`.
+Processes a 100-file PR in well under 500ms on a modern laptop; see
+`tests/performance.test.ts`.
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+Apache-2.0. See [LICENSE](./LICENSE).

@@ -92,8 +92,25 @@ export interface ClassifyResult {
  * `result.verdicts`.
  */
 export function classifyPrFiles(input: ClassifyInput): ClassifyResult {
+  if (input === null || typeof input !== "object") {
+    throw new TypeError(
+      "classifyPrFiles: expected an object with a `files` array, received " +
+        (input === null ? "null" : typeof input),
+    );
+  }
+  if (!Array.isArray(input.files)) {
+    throw new TypeError(
+      "classifyPrFiles: `input.files` must be an array of FileInput objects",
+    );
+  }
   const verdicts: FileVerdict[] = [];
-  for (const file of input.files) {
+  for (let i = 0; i < input.files.length; i += 1) {
+    const file = input.files[i];
+    if (file === null || typeof file !== "object") {
+      throw new TypeError(
+        `classifyPrFiles: input.files[${i}] must be a FileInput object`,
+      );
+    }
     verdicts.push(classifyOne(file));
   }
   return { verdicts };

@@ -32,11 +32,12 @@ import { fixtures } from "./fixtures/index.js";
 //      into the first live sandbox brief (see commit history for
 //      M5 iteration 1).
 //   2. Prescriptive voice (active, passive, or euphemistic) — a reason
-//      must describe the code, not direct the reviewer. Patterns
-//      imported from `@prcompass/prompts` so Tier 1 and Tier 2
-//      enforce a single rule set; drift in one is drift in both.
-import { VOICE_LEAK_PATTERNS } from "@prcompass/prompts";
-
+//      must describe the code, not direct the reviewer. The two rule
+//      sets used to live behind the `@prcompass/prompts` workspace
+//      package; that package is not published, so the Tier 1 patterns
+//      are vendored here. Tier 2 (in PR Compass) keeps its own copy;
+//      drift between the two is acceptable so long as the Tier 1
+//      reasons stay declarative.
 const METADATA_VOICE_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
   ["'file matches' metadata voice", /file matches/i],
   ["'pattern matched' metadata voice", /pattern matched/i],
@@ -44,6 +45,19 @@ const METADATA_VOICE_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
   ["tautological test-file explanation", /\.(test|spec)\.?\s*(in filename|pattern)/i],
   ["tautological 'file type detected'", /file type detected/i],
   ["'file lives in' without content value (bare)", /^file lives in/i],
+];
+
+// Vendored from the (unpublished) `@prcompass/prompts` package.
+// Catches reviewer-directing prose: imperatives ("please review",
+// "make sure"), passive prescriptions ("should be reviewed"), and
+// euphemistic prescriptions ("worth a look", "consider reviewing").
+const VOICE_LEAK_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
+  ["imperative 'please' voice", /\bplease\s+(review|check|verify|inspect|look)\b/i],
+  ["imperative 'make sure' voice", /\bmake sure\b/i],
+  ["passive 'should be reviewed' voice", /\bshould be (reviewed|checked|verified|inspected)\b/i],
+  ["euphemistic 'worth a look' voice", /\bworth (a look|reviewing|checking)\b/i],
+  ["euphemistic 'consider reviewing' voice", /\bconsider (reviewing|checking|inspecting)\b/i],
+  ["second-person 'you should' voice", /\byou (should|must|need to)\b/i],
 ];
 
 const FORBIDDEN_PATTERNS = [
