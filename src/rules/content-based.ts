@@ -140,7 +140,10 @@ const generatedHeader: Rule = {
   evaluate(file) {
     if (!file.patch) return null;
     const lines = file.patch.split("\n");
-    const contentLines: string[] = [];
+    // Track running length without re-joining `contentLines` each
+    // iteration — re-joining is O(n) per line, which is O(n²) over
+    // the patch.
+    let buffer = "";
     for (const line of lines) {
       if (
         line.startsWith("@@") ||
@@ -153,11 +156,12 @@ const generatedHeader: Rule = {
         continue;
       }
       if (line.startsWith("+") || line.startsWith(" ")) {
-        contentLines.push(line.slice(1));
+        if (buffer.length > 0) buffer += "\n";
+        buffer += line.slice(1);
       }
-      if (contentLines.join("\n").length >= 500) break;
+      if (buffer.length >= 500) break;
     }
-    const first500 = contentLines.join("\n").slice(0, 500).toLowerCase();
+    const first500 = buffer.slice(0, 500).toLowerCase();
     for (const sig of HEADER_SIGNATURES) {
       if (first500.includes(sig)) {
         return {
