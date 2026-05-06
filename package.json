@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "A deterministic PR file-triage filter. Zero runtime dependencies. Written in TypeScript, runs on Node >=20.",
   "license": "Apache-2.0",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
