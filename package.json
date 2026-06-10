@@ -1,6 +1,6 @@
 {
   "name": "@prcompass/pr-triage-filter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A deterministic PR file-triage filter. Zero runtime dependencies. Written in TypeScript, runs on Node >=20.",
   "license": "Apache-2.0",
   "publishConfig": {

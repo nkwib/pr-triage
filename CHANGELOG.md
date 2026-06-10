@@ -5,7 +5,11 @@ this file. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2026-06-10
+
+Classifier accuracy pass. Some files that previous versions demoted to
+`skip`/`skim` are now correctly surfaced as `review-candidate`, so verdicts
+can change for existing inputs — hence a minor version bump.
 
 ### Fixed
 
