@@ -140,9 +140,14 @@ const generatedHeader: Rule = {
   evaluate(file) {
     if (!file.patch) return null;
     const lines = file.patch.split("\n");
-    // Track running length without re-joining `contentLines` each
-    // iteration — re-joining is O(n) per line, which is O(n²) over
-    // the patch.
+    // Scan only ADDED lines. Context (` `) lines are unchanged text already in
+    // the file; a hand-written edit to a file that happens to carry an
+    // unchanged "do not edit" banner must NOT be classified as generated. Only
+    // when the banner itself is part of the added content (a newly generated
+    // file) does this rule fire.
+    //
+    // Track running length without re-joining the buffer each iteration —
+    // re-joining is O(n) per line, which is O(n²) over the patch.
     let buffer = "";
     for (const line of lines) {
       if (
@@ -155,7 +160,7 @@ const generatedHeader: Rule = {
       ) {
         continue;
       }
-      if (line.startsWith("+") || line.startsWith(" ")) {
+      if (line.startsWith("+")) {
         if (buffer.length > 0) buffer += "\n";
         buffer += line.slice(1);
       }

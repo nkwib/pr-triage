@@ -1,0 +1,11 @@
+node_modules/
+dist/
+
+# No lockfile is committed for this package (devDependencies only, resolved
+# fresh in CI). Ignore the stray npm lockfile so it never lands in the tree.
+package-lock.json
+
+# Test/coverage output
+coverage/
+*.log
+.DS_Store

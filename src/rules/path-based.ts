@@ -18,10 +18,12 @@ const LOCKFILES: readonly string[] = [
   "flake.lock",
 ];
 
+// Directories whose name, appearing as any path segment, marks the file as
+// generated output. These names are distinctive enough that a collision with a
+// hand-written source tree is vanishingly unlikely.
 const GENERATED_DIRS: readonly string[] = [
   "dist",
   "build",
-  "out",
   "coverage",
   "__generated__",
   "_generated",
@@ -29,11 +31,18 @@ const GENERATED_DIRS: readonly string[] = [
   ".nuxt",
   ".svelte-kit",
   ".turbo",
-  "target",
   "node_modules",
   ".cache",
   ".output",
 ];
+
+// Collision-prone generated directory names. `target` (Rust/Maven build
+// output) and `out` (generic build output) are common-enough words to appear
+// in a real source tree — e.g. `packages/target/src/index.ts` or
+// `src/out/index.ts`. We still skip them as generated output, but only when
+// they are the repository-root directory (see `isRootDirectory`), so genuine
+// source files nested under such a name are never silently dropped.
+const COLLISION_PRONE_GENERATED_DIRS: readonly string[] = ["target", "out"];
 
 const GENERATED_SUFFIXES: readonly string[] = [
   ".min.js",
@@ -154,6 +163,22 @@ const TEST_DIRS: readonly string[] = ["tests", "test", "__tests__", "spec"];
 
 const DOC_EXTENSIONS: readonly string[] = [".md", ".mdx", ".markdown"];
 
+// Extensions for which the DOC_FILENAMES stem match (README, LICENSE,
+// SECURITY, …) is allowed to fire. Restricting the stem match to these
+// keeps prose documents (`SECURITY.md`, `NOTICE.txt`) classified as docs
+// while preventing real source files that happen to share a doc-like stem
+// (`src/security.ts`, `src/license.ts`, `src/notice.ts`, `src/authors.ts`)
+// from being demoted. Extensionless files (`LICENSE`, `AUTHORS`) are handled
+// separately because they have no extension to match here.
+const DOC_STEM_TEXT_EXTENSIONS: readonly string[] = [
+  ".md",
+  ".mdx",
+  ".markdown",
+  ".txt",
+  ".rst",
+  ".adoc",
+];
+
 function basename(path: string): string {
   const idx = path.lastIndexOf("/");
   return idx >= 0 ? path.slice(idx + 1) : path;
@@ -163,6 +188,16 @@ function inDirectory(path: string, dir: string): boolean {
   const normalized = path.toLowerCase();
   const d = dir.toLowerCase();
   return normalized.startsWith(d + "/") || normalized.includes("/" + d + "/");
+}
+
+// True only when `dir` is the FIRST path segment (repository root). Used for
+// collision-prone generated directory names (`target/`, `out/`): a Rust build
+// lives at `target/` and a generic build output at `out/`, both at the repo
+// root, whereas a real source tree nests these names deeper
+// (`packages/target/src/...`, `src/out/...`). Anchoring to the root keeps the
+// build dirs skipped without ever dropping nested source files.
+function isRootDirectory(path: string, dir: string): boolean {
+  return path.toLowerCase().startsWith(dir.toLowerCase() + "/");
 }
 
 function endsWithLower(path: string, suffix: string): boolean {
@@ -211,6 +246,14 @@ const generatedPath: Rule = {
         };
       }
     }
+    for (const dir of COLLISION_PRONE_GENERATED_DIRS) {
+      if (isRootDirectory(file.path, dir)) {
+        return {
+          verdict: "skip",
+          reason: `Regenerated output from \`${dir}/\`; verify by rerunning the generator.`,
+        };
+      }
+    }
     for (const suffix of GENERATED_SUFFIXES) {
       if (endsWithLower(file.path, suffix)) {
         return {
@@ -253,7 +296,14 @@ const docs: Rule = {
         };
       }
     }
-    if (DOC_FILENAMES.includes(stem)) {
+    // Only treat a doc-like stem (README, LICENSE, SECURITY, NOTICE, …) as a
+    // document when the file is extensionless (`LICENSE`, `AUTHORS`) or carries
+    // a prose-text extension. Otherwise a real source file such as
+    // `src/security.ts` or `src/license.ts` would be wrongly demoted to `skim`.
+    const hasExtension = name.includes(".");
+    const isDocStemEligible =
+      !hasExtension || DOC_STEM_TEXT_EXTENSIONS.some((ext) => endsWithLower(name, ext));
+    if (isDocStemEligible && DOC_FILENAMES.includes(stem)) {
       return {
         verdict: "skim",
         reason: "Top-level project document (README / CHANGELOG / LICENSE family).",
