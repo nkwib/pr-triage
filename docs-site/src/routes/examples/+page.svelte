@@ -1,5 +1,5 @@
 <svelte:head>
-  <title>@nkwib/pr-triage — examples</title>
+  <title>@prcompass/pr-triage-filter — examples</title>
   <meta
     name="description"
     content="Copy-paste integrations: GitHub PR webhook, Octokit, GitHub Action, the CLI, and a CI pre-review script."
@@ -27,7 +27,7 @@
       <code>FileInput</code>. The status field is the one that needs translating —
       everything else maps 1:1.
     </p>
-    <pre class="code-block language-typescript" data-lang="typescript"><code>{`import { classifyPrFiles, type ChangeType } from '@nkwib/pr-triage';
+    <pre class="code-block language-typescript" data-lang="typescript"><code>{`import { classifyPrFiles, type ChangeType } from '@prcompass/pr-triage-filter';
 import type { Octokit } from '@octokit/rest';
 
 const STATUS_TO_CHANGE_TYPE: Record<string, ChangeType> = {
@@ -115,7 +115,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
-      - run: npm install --no-save @nkwib/pr-triage @octokit/rest
+      - run: npm install --no-save @prcompass/pr-triage-filter @octokit/rest
       - run: node .github/scripts/triage.mjs
         env:
           GH_TOKEN: \${{ github.token }}
@@ -142,7 +142,7 @@ for (const v of verdicts) {
 }
 
 // BAD — reason is human-readable, not UI-stable.
-if (v.reason === 'Package lockfile — content is auto-generated') {
+if (v.reason === 'Auto-generated lockfile; re-review by rerunning the package manager, not by reading the diff.') {
   // …will silently break when the wording changes.
 }
 `}</code></pre>
@@ -151,16 +151,19 @@ if (v.reason === 'Package lockfile — content is auto-generated') {
   <section class="ex">
     <div class="ex-head">
       <span class="tag">5</span>
-      <h2>Local diff — using the @nkwib/pr-analyze wrapper</h2>
+      <h2>Local diff — using the @prcompass/cli wrapper</h2>
     </div>
     <p class="ex-desc">
-      The companion CLI runs this filter (alongside the rest of the deterministic
-      pipeline) over a local git diff. No GitHub round-trip needed during dev.
+      The companion CLI (<code>@prcompass/cli</code>, binary <code>prcompass</code>)
+      runs this filter (alongside the rest of the deterministic pipeline) over a
+      local git diff. No GitHub round-trip needed during dev.
     </p>
-    <pre class="code-block language-bash" data-lang="bash"><code>{`npx @nkwib/pr-analyze analyze --repo . --diff main..HEAD --format human
+    <pre class="code-block language-bash" data-lang="bash"><code>{`# Install once (exposes the \`prcompass\` binary):
+npm install -g @prcompass/cli
+prcompass analyze --repo . --diff main..HEAD --format human
 
-# JSON for piping into another tool:
-npx @nkwib/pr-analyze analyze --repo . --diff HEAD~1 | jq '.triage.verdicts'
+# Or run without installing, then pipe the triage verdicts out as JSON:
+npx --package=@prcompass/cli prcompass analyze --repo . --diff HEAD~1 | jq '.triage.verdicts'
 `}</code></pre>
   </section>
 

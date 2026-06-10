@@ -32,13 +32,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nkwib/pr-triage.git"
+    "url": "git+https://github.com/nkwib/pr-triage.git"
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {},
   "devDependencies": {

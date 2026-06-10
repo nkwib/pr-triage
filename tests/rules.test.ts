@@ -100,6 +100,48 @@ describe("rule: generated-path", () => {
     });
     expect(v.ruleId).toBe("generated-path");
   });
+
+  it("still skips a root-level Rust target/ build dir", () => {
+    const v = classify({
+      path: "target/debug/build/foo.rs",
+      changeType: "modified",
+      additions: 1,
+      deletions: 1,
+    });
+    expect(v.ruleId).toBe("generated-path");
+  });
+
+  it("still skips a root-level build-output out/ dir", () => {
+    const v = classify({
+      path: "out/bundle.js",
+      changeType: "added",
+      additions: 100,
+      deletions: 0,
+    });
+    expect(v.ruleId).toBe("generated-path");
+  });
+
+  it("does NOT skip real source under a nested target/ segment", () => {
+    const v = classify({
+      path: "packages/target/src/index.ts",
+      changeType: "modified",
+      additions: 10,
+      deletions: 2,
+    });
+    expect(v.verdict).toBe("review-candidate");
+    expect(v.ruleId).toBe("default");
+  });
+
+  it("does NOT skip real source under a nested out/ segment", () => {
+    const v = classify({
+      path: "src/out/index.ts",
+      changeType: "modified",
+      additions: 5,
+      deletions: 1,
+    });
+    expect(v.verdict).toBe("review-candidate");
+    expect(v.ruleId).toBe("default");
+  });
 });
 
 describe("rule: binary", () => {
@@ -272,6 +314,45 @@ describe("rule: generated-header", () => {
     });
     expect(v.ruleId).toBe("generated-header");
   });
+
+  it("does NOT fire when the banner is only in a context line (real hand edit)", () => {
+    // The "do not edit" banner is unchanged context (` ` prefix); the only
+    // added line is a genuine code change. This must NOT be treated as
+    // generated.
+    const v = classify({
+      path: "src/config.ts",
+      changeType: "modified",
+      additions: 1,
+      deletions: 1,
+      patch: [
+        "@@ -1,4 +1,4 @@",
+        " // DO NOT EDIT — auto-generated from schema.yaml",
+        " export const config = {",
+        "-  timeout: 1000,",
+        "+  timeout: 5000,",
+        " };",
+      ].join("\n"),
+    });
+    expect(v.verdict).toBe("review-candidate");
+    expect(v.ruleId).toBe("default");
+  });
+
+  it("fires when a newly-added file's added content includes the banner", () => {
+    const v = classify({
+      path: "src/types/generated.ts",
+      changeType: "added",
+      additions: 3,
+      deletions: 0,
+      patch: [
+        "@@ -0,0 +1,3 @@",
+        "+// DO NOT EDIT — auto-generated from schema.yaml",
+        "+export interface User { id: string }",
+        "+export interface Order { id: string }",
+      ].join("\n"),
+    });
+    expect(v.verdict).toBe("skip");
+    expect(v.ruleId).toBe("generated-header");
+  });
 });
 
 describe("rule: docs", () => {
@@ -292,6 +373,62 @@ describe("rule: docs", () => {
       additions: 1,
       deletions: 1,
     });
+    expect(v.ruleId).toBe("docs");
+  });
+
+  it("does NOT demote a real source file with a doc-like stem (security.ts)", () => {
+    const v = classify({
+      path: "src/security.ts",
+      changeType: "modified",
+      additions: 8,
+      deletions: 2,
+    });
+    expect(v.verdict).toBe("review-candidate");
+    expect(v.ruleId).toBe("default");
+  });
+
+  it("does NOT demote other doc-stem source files (license/notice/authors.ts)", () => {
+    for (const path of ["src/license.ts", "src/notice.ts", "src/authors.ts"]) {
+      const v = classify({
+        path,
+        changeType: "modified",
+        additions: 4,
+        deletions: 1,
+      });
+      expect(v.ruleId).toBe("default");
+    }
+  });
+
+  it("still treats SECURITY.md as a doc (skim)", () => {
+    const v = classify({
+      path: "SECURITY.md",
+      changeType: "modified",
+      additions: 3,
+      deletions: 0,
+    });
+    expect(v.verdict).toBe("skim");
+    expect(v.ruleId).toBe("docs");
+  });
+
+  it("still treats an extensionless doc stem (AUTHORS) as a doc (skim)", () => {
+    const v = classify({
+      path: "AUTHORS",
+      changeType: "modified",
+      additions: 1,
+      deletions: 0,
+    });
+    expect(v.verdict).toBe("skim");
+    expect(v.ruleId).toBe("docs");
+  });
+
+  it("treats a doc stem with a prose-text extension (NOTICE.txt) as a doc", () => {
+    const v = classify({
+      path: "NOTICE.txt",
+      changeType: "modified",
+      additions: 2,
+      deletions: 0,
+    });
+    expect(v.verdict).toBe("skim");
     expect(v.ruleId).toBe("docs");
   });
 });
