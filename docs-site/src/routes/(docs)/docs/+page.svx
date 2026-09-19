@@ -16,7 +16,7 @@ A deterministic PR file-triage filter. **Zero runtime dependencies.** Pure funct
 
 Given the files in a pull request, classifies each as `skip`, `skim`, or `review-candidate` so a reviewer (or the next LLM tier in a review pipeline) spends attention only on what changed. Uses path patterns, git metadata, and diff-level heuristics. **No AST parsing. No network. No filesystem.**
 
-Extracted from [PR Compass](https://github.com/prcompass/prcompass) and published standalone so any review pipeline can use it.
+Extracted from PR Compass and published standalone so any review pipeline can use it.
 
 <h2 id="installation">Installation</h2>
 
