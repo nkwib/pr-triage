@@ -8,7 +8,7 @@ review-candidate` so a reviewer's (or a downstream LLM's) attention lands
 where it matters. Uses path patterns, git metadata, and diff-level heuristics.
 No AST parsing. No network. No filesystem. Pure function.
 
-Extracted from [PR Compass](https://github.com/prcompass/prcompass) and
+Extracted from PR Compass and
 published standalone so any review pipeline can use it.
 
 ## Why zero dependencies
